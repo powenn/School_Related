@@ -42,7 +42,7 @@ def DataFileExist() -> bool:
 def OutputFileExist() -> bool:
     DebugPrint(f"output file should be located at {OUTPUT_PATH}")
     if (not os.path.exists(OUTPUT_PATH)) or (not os.path.isfile(OUTPUT_PATH)):
-        print(f"{OUTPUT_FILENAME} not int {CURRENT_DIR} or not a file")
+        print(f"{OUTPUT_FILENAME} not in {CURRENT_DIR} or not a file")
         return False
     return True
 
