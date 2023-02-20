@@ -4,9 +4,10 @@ ctrl+C will return -2
 """
 
 import os
+import time
 import requests
-from bs4 import BeautifulSoup
 import openpyxl
+from bs4 import BeautifulSoup
 
 DEBUG = True
 CURRENT_DIR = os.path.dirname(__file__)
@@ -174,6 +175,7 @@ def writeToOutput(anime_list: list[Anime]):
     detailed_genres: list[str]
     tags: list[str]
     actors: list[str]
+    seasons: list[str]
     """
     for anime in anime_list:
         for st in anime.starring:
@@ -183,6 +185,7 @@ def writeToOutput(anime_list: list[Anime]):
                         for s in anime.seasons:
                             sheet.append([BASE_URL+anime.id, anime.id, anime.name, anime.release_year, anime.maturity_number,
                                           anime.title_genre, st, s, anime.downloadable_info, dg, t, a, anime.has_multi_seasons])
+    time.sleep(1)
     print(f"total rows value : {sheet.max_row}")
     workbook.save(OUTPUT_PATH)
 
@@ -193,7 +196,7 @@ if __name__ == "__main__":
     if not DataFileExist():
         exit(-1)
     DebugPrint("Passed data file check")
-    if hasNetworkConnection() == False:
+    if not hasNetworkConnection():
         print("no network connection")
         exit(-1)
     else:
