@@ -23,7 +23,7 @@ def DebugPrint(message: str):
         print(f"[DEBUG] : {message}")
 
 
-def getAnswer(text):
+def GetAnswer(text):
     try:
         return input(text)
     except KeyboardInterrupt:
@@ -79,7 +79,7 @@ class Anime:
         print(f"Id : {self.id}\nAnime name : {self.name}\nRelease year : {self.release_year}\nMaturity number : {self.maturity_number}\nTitle genre : {self.title_genre}\nStarring : {self.starring}\nDownloadable info : {self.downloadable_info}\nDetailed genres : {self.detailed_genres}\nTags : {self.tags}\nActors : {self.actors}\nHas multi seasons : {self.has_multi_seasons}\nSeasons : {self.seasons}")
 
 
-def hasNetworkConnection() -> bool:
+def HasNetworkConnection() -> bool:
     try:
         request = requests.get("https://google.com", timeout=3)
         return request.status_code == requests.codes.ok
@@ -92,7 +92,7 @@ def GetStatusAndResponce(url: str) -> tuple:
     return (r.status_code, r.text)
 
 
-def processData() -> list[Anime]:
+def ProcessData() -> list[Anime]:
     data = open(DATA_PATH, "r")
     data_list = list(map(lambda x: x.replace("\n", ""), data.readlines()))
     anime_list = []
@@ -103,13 +103,13 @@ def processData() -> list[Anime]:
         DebugPrint(f"id : {id} , name : {name} , full url : {full_url}")
         statAndResponce = GetStatusAndResponce(full_url)
         if statAndResponce[0] == requests.codes.ok:
-            anime_list.append(processHtml(id, statAndResponce[1]))
+            anime_list.append(ProcessHtml(id, statAndResponce[1]))
         else:
             print("error occurred :( ")
     return anime_list
 
 
-def processHtml(id: str, text: str) -> Anime:
+def ProcessHtml(id: str, text: str) -> Anime:
     sp = BeautifulSoup(text, "html.parser")
     name = sp.find("h1", class_="title-title").text.strip()
     release_year = sp.find(
@@ -163,7 +163,7 @@ def processHtml(id: str, text: str) -> Anime:
     return Anime(id, name, release_year, maturity_number, title_genre, starring, seasons, downloadable_info, detailed_genres, tags, actors, has_multi_seasons)
 
 
-def writeToOutput(anime_list: list[Anime]):
+def WriteToOutput(anime_list: list[Anime]):
     print(f"Writing to {OUTPUT_PATH} , please wait a moment")
     workbook = openpyxl.Workbook()
     sheet = workbook.worksheets[0]
@@ -196,22 +196,22 @@ if __name__ == "__main__":
     if not DataFileExist():
         exit(-1)
     DebugPrint("Passed data file check")
-    if not hasNetworkConnection():
+    if not HasNetworkConnection():
         print("no network connection")
         exit(-1)
     else:
         DebugPrint("has network connection")
     if OutputFileExist():
-        ans = getAnswer(
+        ans = GetAnswer(
             "Overwrite the output file ?\n( y for overwrite ctrl+c will abprt it and exit the script \nand others responce will attempt you to give a name for new output file name ) : ")
         if ans.lower() == "y" or ans.lower() == "yes":
             print("Output file will be overwrite")
         else:
-            new_name = getAnswer("Enter a new name for new output file : ")
+            new_name = GetAnswer("Enter a new name for new output file : ")
             OUTPUT_FILENAME = f"{new_name}.xlsx"
             OUTPUT_PATH = f"{CURRENT_DIR}/{OUTPUT_FILENAME}"
-    anime_list = processData()
+    anime_list = ProcessData()
     if DEBUG:
         for anime in anime_list:
             anime.printInfo()
-    writeToOutput(anime_list)
+    WriteToOutput(anime_list)
