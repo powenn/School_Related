@@ -184,7 +184,7 @@ def WriteToOutput(anime_list: list[Anime]):
                     for a in anime.actors:
                         for s in anime.seasons:
                             sheet.append([BASE_URL+anime.id, anime.id, anime.name, anime.release_year, anime.maturity_number,
-                                          anime.title_genre, st, s, anime.downloadable_info, dg, t, a, anime.has_multi_seasons])
+                                          anime.title_genre, st, s, anime.downloadable_info, dg, t, a, "True" if anime.has_multi_seasons else "False"])
     time.sleep(1)
     print(f"total rows value : {sheet.max_row}")
     workbook.save(OUTPUT_PATH)
